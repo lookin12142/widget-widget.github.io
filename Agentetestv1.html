@@ -130,7 +130,7 @@
     /* Estado 3: 46x46 - Solo icono */
     .widget-state-3 {
       width: 46px;
-      height: 46px;
+      height: 46px; 
       background: white;
       border-radius: 50%;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -408,6 +408,221 @@
     .demo-controls button.active {
       background: #2ed573;
     }
+
+    /* === RESPONSIVE DESIGN PARA MÓVIL === */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      /* Widget más pequeño en móvil y arrastrable */
+      .chat-widget {
+        right: 15px;
+        bottom: 15px;
+        touch-action: none; /* Prevenir scroll durante drag */
+        user-select: none; /* Prevenir selección de texto */
+      }
+      
+      /* Cuando el widget está siendo arrastrado */
+      .chat-widget.dragging {
+        z-index: 999999;
+        transform: scale(1.05);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      }
+      
+      /* Posicionamiento fijo del chat en móvil */
+      .chat-window.mobile-position {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: calc(100vw - 40px) !important;
+        max-width: 350px !important;
+        height: 70vh !important;
+        max-height: 500px !important;
+        margin: 0 !important;
+      }
+
+      /* Estado 1 más pequeño */
+      .widget-state-1 {
+        width: 280px;
+        height: 85px;
+        padding: 12px 15px;
+        border-radius: 40px;
+      }
+
+      .widget-state-1 .bot-avatar {
+        width: 50px;
+        height: 50px;
+        margin-right: 12px;
+      }
+
+      .widget-state-1 .message-content {
+        font-size: 14px;
+      }
+
+      .widget-state-1 .close-btn {
+        width: 25px;
+        height: 25px;
+        font-size: 16px;
+        margin-left: 8px;
+      }
+
+      /* Estado 2 más pequeño */
+      .widget-state-2 {
+        width: 90px;
+        height: 85px;
+      }
+
+      .widget-state-2 .bot-avatar {
+        width: 60px;
+        height: 60px;
+      }
+
+      .widget-state-2 .close-btn {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+        top: -8px;
+        right: -8px;
+      }
+
+      /* Estado 3 más pequeño */
+      .widget-state-3 {
+        width: 55px;
+        height: 55px;
+      }
+
+      /* Chat window responsive */
+      .chat-window {
+        right: 15px;
+        bottom: 110px;
+        width: calc(100vw - 30px);
+        max-width: 350px;
+        height: 450px;
+      }
+
+      .chat-header {
+        padding: 12px 15px;
+      }
+
+      .chat-header h3 {
+        font-size: 15px;
+      }
+
+      .chat-close {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+        right: 12px;
+      }
+
+      .chat-body {
+        padding: 15px;
+      }
+
+      .message-content {
+        max-width: 220px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .message-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+      }
+
+      .chat-input-container {
+        padding: 12px 15px;
+      }
+
+      .chat-input {
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .send-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+      }
+
+      /* Controles de demo más pequeños */
+      .demo-controls {
+        top: 15px;
+        left: 15px;
+        padding: 15px;
+        max-width: calc(100vw - 30px);
+      }
+
+      .demo-controls h3 {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      .demo-controls button {
+        padding: 8px 12px;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+    }
+
+    /* Para pantallas muy pequeñas (móviles pequeños) */
+    @media screen and (max-width: 480px) {
+      /* Estado 1 aún más pequeño */
+      .widget-state-1 {
+        width: 250px;
+        height: 75px;
+        padding: 10px 12px;
+      }
+
+      .widget-state-1 .bot-avatar {
+        width: 45px;
+        height: 45px;
+        margin-right: 10px;
+      }
+
+      .widget-state-1 .message-content {
+        font-size: 13px;
+      }
+
+      /* Chat window en pantalla completa en móviles pequeños */
+      .chat-window {
+        right: 10px;
+        bottom: 90px;
+        width: calc(100vw - 20px);
+        height: calc(100vh - 120px);
+        max-height: 500px;
+      }
+
+      .message-content {
+        max-width: 180px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .message-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+
+      /* Ocultar controles de demo en móviles muy pequeños */
+      .demo-controls {
+        display: none;
+      }
+    }
+
+    /* Para landscape en móviles */
+    @media screen and (max-width: 768px) and (orientation: landscape) {
+      .chat-window {
+height: calc(100vh - 90px);
+        max-height: 400px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -472,6 +687,12 @@
 let currentState = 1;
 let isTyping = false;
 
+// Variables para el sistema de arrastre en móvil
+let isDragging = false;
+let isMobile = false;
+let dragOffset = { x: 0, y: 0 };
+let lastPosition = { x: null, y: null };
+
 // Configuración del webhook
 const config = {
   webhookUrl: 'https://n8n.smartclic.pe/webhook/dac6fef4-be0b-4d46-b717-9fb92cbd1450/chat',
@@ -495,6 +716,22 @@ const sendBtn = document.getElementById('send-btn');
 const estado1Btn = document.getElementById('estado1-btn');
 const estado2Btn = document.getElementById('estado2-btn');
 const estado3Btn = document.getElementById('estado3-btn');
+
+// Función para detectar dispositivos móviles
+function detectMobile() {
+  return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Función para obtener la posición guardada
+function getSavedPosition() {
+  const saved = localStorage.getItem('chatWidgetPosition');
+  return saved ? JSON.parse(saved) : null;
+}
+
+// Función para guardar la posición
+function savePosition(x, y) {
+  localStorage.setItem('chatWidgetPosition', JSON.stringify({ x, y }));
+}
 
 // Funciones de estado
 function showState(stateNumber) {
@@ -534,20 +771,124 @@ function nextState(fromState) {
   }
 }
 
+// Funciones para el sistema de arrastre en móvil
+function makeWidgetDraggable() {
+  if (!isMobile) return;
+  
+  const widget = document.querySelector('.chat-widget');
+  let activeState = null;
+  
+  // Función para evitar que el widget se quede en el centro
+  function constrainPosition(x, y) {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const threshold = 100; // pixels de margen del centro
+    
+    // Si está muy cerca del centro, moverlo hacia un lado
+    if (Math.abs(x - centerX) < threshold && Math.abs(y - centerY) < threshold) {
+      x = x < centerX ? centerX - threshold : centerX + threshold;
+    }
+    
+    // Mantener dentro de los límites de la pantalla
+    const widgetWidth = widget.offsetWidth;
+    const widgetHeight = widget.offsetHeight;
+    const margin = 10;
+    
+    x = Math.max(margin, Math.min(window.innerWidth - widgetWidth - margin, x));
+    y = Math.max(margin, Math.min(window.innerHeight - widgetHeight - margin, y));
+    
+    return { x, y };
+  }
+  
+  // Eventos para touch (móvil)
+  function handleTouchStart(e) {
+    if (e.target.classList.contains('close-btn')) return;
+    
+    isDragging = true;
+    activeState = e.currentTarget;
+    
+    const touch = e.touches[0];
+    const rect = widget.getBoundingClientRect();
+    
+    dragOffset.x = touch.clientX - rect.left;
+    dragOffset.y = touch.clientY - rect.top;
+    
+    widget.style.transition = 'none';
+    e.preventDefault();
+  }
+  
+  function handleTouchMove(e) {
+    if (!isDragging || !activeState) return;
+    
+    const touch = e.touches[0];
+    let x = touch.clientX - dragOffset.x;
+    let y = touch.clientY - dragOffset.y;
+    
+    const constrained = constrainPosition(x, y);
+    
+    widget.style.left = constrained.x + 'px';
+    widget.style.top = constrained.y + 'px';
+    widget.style.right = 'auto';
+    widget.style.bottom = 'auto';
+    
+    e.preventDefault();
+  }
+  
+  function handleTouchEnd(e) {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    activeState = null;
+    widget.style.transition = 'all 0.3s ease';
+    
+    // Guardar posición
+    const rect = widget.getBoundingClientRect();
+    savePosition(rect.left, rect.top);
+    lastPosition.x = rect.left;
+    lastPosition.y = rect.top;
+  }
+  
+  // Agregar eventos de touch a todos los estados
+  [estado1, estado2, estado3].forEach(state => {
+    if (state) {
+      state.addEventListener('touchstart', handleTouchStart, { passive: false });
+    }
+  });
+  
+  document.addEventListener('touchmove', handleTouchMove, { passive: false });
+  document.addEventListener('touchend', handleTouchEnd);
+  
+  // Restaurar posición guardada
+  const savedPos = getSavedPosition();
+  if (savedPos) {
+    const constrained = constrainPosition(savedPos.x, savedPos.y);
+    widget.style.left = constrained.x + 'px';
+    widget.style.top = constrained.y + 'px';
+    widget.style.right = 'auto';
+    widget.style.bottom = 'auto';
+    lastPosition.x = constrained.x;
+    lastPosition.y = constrained.y;
+  }
+}
+
 // Eventos de clic para toggle del chat (abrir/cerrar)
 estado1.addEventListener('click', (e) => {
-  if (!e.target.classList.contains('close-btn')) {
+  if (!e.target.classList.contains('close-btn') && !isDragging) {
     toggleChat();
   }
 });
 
 estado2.addEventListener('click', (e) => {
-  if (!e.target.classList.contains('close-btn')) {
+  if (!e.target.classList.contains('close-btn') && !isDragging) {
     toggleChat();
   }
 });
 
-estado3.addEventListener('click', toggleChat);
+estado3.addEventListener('click', (e) => {
+  if (!isDragging) {
+    toggleChat();
+  }
+});
 
 // Controles de demo
 estado1Btn.addEventListener('click', () => showState(1));
@@ -556,6 +897,8 @@ estado3Btn.addEventListener('click', () => showState(3));
 
 // Funciones del chat
 function toggleChat() {
+  if (isDragging) return; // No abrir/cerrar si está arrastrando
+  
   if (chatWindow.classList.contains('active')) {
     closeChat();
   } else {
@@ -564,12 +907,20 @@ function toggleChat() {
 }
 
 function openChat() {
+  // En móvil, posicionar el chat de forma fija y responsiva
+  if (isMobile) {
+    chatWindow.classList.add('mobile-position');
+  }
+  
   chatWindow.classList.add('active');
   chatInput.focus();
 }
 
 function closeChat() {
   chatWindow.classList.remove('active');
+  if (isMobile) {
+    chatWindow.classList.remove('mobile-position');
+  }
 }
 
 function addMessage(content, isBot = false) {
@@ -745,13 +1096,46 @@ chatInput.addEventListener('input', function() {
 
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
+  // Detectar si es móvil
+  isMobile = detectMobile();
+  
   showState(1);
+  
+  // Si es móvil, activar sistema de arrastre
+  if (isMobile) {
+    makeWidgetDraggable();
+    
+    // En móvil, mostrar solo el estado 3 (icono) por defecto para mejor UX
+    showState(3);
+  }
   
   // Agregar funcionalidad de cerrar chat al avatar del mensaje inicial del bot
   const initialBotAvatar = document.querySelector('.chat-body .message.bot .message-avatar');
   if (initialBotAvatar) {
     initialBotAvatar.addEventListener('click', closeChat);
   }
+  
+  // Redetectar móvil en cambio de orientación o redimensionamiento
+  window.addEventListener('resize', () => {
+    const wasMobile = isMobile;
+    isMobile = detectMobile();
+    
+    // Si cambió de móvil a desktop o viceversa, reinicializar
+    if (wasMobile !== isMobile) {
+      if (isMobile) {
+        makeWidgetDraggable();
+        showState(3);
+      } else {
+        // Restaurar posición normal en desktop
+        const widget = document.querySelector('.chat-widget');
+        widget.style.left = 'auto';
+        widget.style.top = 'auto';
+        widget.style.right = '20px';
+        widget.style.bottom = '20px';
+        showState(1);
+      }
+    }
+  });
 });
 </script>
 
