@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartClic Chat Widget - 3 Estados</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    /* === ESTADOS DEL WIDGET === */
+    .chat-widget {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 999999;
+      transition: all 0.3s ease;
+    }
+
+    /* Estado 1: 326x99 - Mensaje completo */
+    .widget-state-1 {
+      width: 326px;
+      height: 99px;
+      background: white;
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid #f0f0f0;
+    }
+
+    .widget-state-1 .bot-avatar {
+      width: 60px;
+      height: 60px;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .widget-state-1 .bot-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .widget-state-1 .message-content {
+      flex: 1;
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .widget-state-1 .close-btn {
+      width: 30px;
+      height: 30px;
+      background: rgba(249, 43, 96, 1);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+    }
+
+    .widget-state-1 .close-btn:hover {
+      background: rgba(229, 23, 76, 1);
+    }
+
+    /* Estado 2: 106x100 - Solo bot */
+    .widget-state-2 {
+      width: 106px;
+      height: 100px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid #f0f0f0;
+    }
+
+    .widget-state-2 .bot-avatar {
+      width: 70px;
+      height: 70px;
+    }
+
+    .widget-state-2 .bot-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .widget-state-2 .close-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 30px;
+      height: 30px;
+      background: rgba(249, 43, 96, 1);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .widget-state-2 .close-btn:hover {
+      background: rgba(229, 23, 76, 1);
+    }
+
+    /* Estado 3: 46x46 - Solo icono */
+    .widget-state-3 {
+      width: 46px;
+      height: 46px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #f0f0f0;
+    }
+
+    .widget-state-3 .chat-icon {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* === VENTANA DE CHAT === */
+    .chat-window {
+      position: fixed;
+      right: 20px;
+      bottom: 130px;
+      width: 350px;
+      height: 500px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      z-index: 1000000;
+      overflow: hidden;
+    }
+
+    .chat-window.active {
+      display: flex;
+    }
+
+    .chat-header {
+      background: rgba(249, 43, 96, 1);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .chat-close {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      position: absolute;
+      right: 15px;
+      top: 5%;
+      transform: translateY(-50%);
+      transition: all 0.2s ease;
+    }
+
+    .chat-close:hover {
+      background: rgba(255,255,255,0.3);
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 15px;
+      align-items: flex-start;
+    }
+
+    .message.bot {
+      justify-content: flex-start;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .message-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .message.bot .message-avatar {
+      margin-right: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .message.bot .message-avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .message.bot .message-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .message.user .message-avatar {
+      background: rgba(178, 181, 218, 1);
+      color: white;
+      margin-left: 10px;
+      order: 1;
+    }
+
+    .message-content {
+      max-width: 250px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .message.bot .message-content {
+      background: white;
+      color: #333;
+      border: 1px solid #e9ecef;
+    }
+
+    .message.user .message-content {
+      background: rgba(178, 181, 218, 1);
+      color: white;
+    }
+
+    .chat-input-container {
+      padding: 15px 20px;
+      background: white;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      padding: 12px 16px;
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      max-height: 80px;
+    }
+
+    .chat-input:focus {
+      border-color: rgba(249, 43, 96, 1);
+    }
+
+    .send-btn {
+      background: rgba(249, 43, 96, 1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .send-btn:hover {
+      background: rgba(229, 23, 76, 1);
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 18px;
+      border: 1px solid #e9ecef;
+      max-width: 250px;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Ocultar estados */
+    .widget-state-1.hidden,
+    .widget-state-2.hidden,
+    .widget-state-3.hidden {
+      display: none;
+    }
+
+    /* Demo controls */
+    .demo-controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 1000001;
+    }
+
+    .demo-controls h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .demo-controls button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      background: rgba(249, 43, 96, 1);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .demo-controls button:hover {
+      background: rgba(229, 23, 76, 1);
+    }
+
+    .demo-controls button.active {
+      background: #2ed573;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Controles de Demo -->
+<div class="demo-controls">
+  <h3>Estados del Widget</h3>
+  <button id="estado1-btn" class="active">Estado 1: Mensaje completo</button>
+  <button id="estado2-btn">Estado 2: Solo bot</button>
+  <button id="estado3-btn">Estado 3: Solo ícono</button>
+</div>
+
+<!-- Widget de Chat -->
+<div class="chat-widget">
+  <!-- Estado 1: 326x99 -->
+  <div class="widget-state-1" id="widget-state-1">
+    <div class="bot-avatar">
+      <img src="./assets/bot-icon.png" alt="Bot Assistant" />
+    </div>
+    <div class="message-content">¡Hola! ¿Te puedo ayudar?</div>
+    <button class="close-btn" onclick="nextState(1)">×</button>
+  </div>
+
+  <!-- Estado 2: 106x100 -->
+  <div class="widget-state-2 hidden" id="widget-state-2">
+    <div class="bot-avatar">
+      <img src="./assets/bot-icon.png" alt="Bot Assistant" />
+    </div>
+    <button class="close-btn" onclick="nextState(2)">×</button>
+  </div>
+
+  <!-- Estado 3: 46x46 -->
+  <div class="widget-state-3 hidden" id="widget-state-3">
+    <img class="chat-icon" src="./assets/chat-icon.png" alt="Chat Icon" />
+  </div>
+</div>
+
+<!-- Ventana de Chat -->
+<div class="chat-window" id="chat-window">
+  <div class="chat-header">
+    <h3>Asistente Virtual</h3>
+    <button class="chat-close" onclick="closeChat()">×</button>
+  </div>
+  
+  <div class="chat-body" id="chat-body">
+    <div class="message bot">
+      <div class="message-avatar">
+        <img src="./assets/bot-icon.png" alt="Bot Assistant" />
+      </div>
+      <div class="message-content">¡Hola soy Smarty tu asistente virtual ¿En qué puedo ayudarte?</div>
+    </div>
+  </div>
+  
+  <div class="chat-input-container">
+    <textarea class="chat-input" id="chat-input" placeholder="Escribe un mensaje" rows="1"></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+// Estado actual del widget
+let currentState = 1;
+let isTyping = false;
+
+// Configuración del webhook
+const config = {
+  webhookUrl: 'https://n8n.smartclic.pe/webhook/dac6fef4-be0b-4d46-b717-9fb92cbd1450/chat',
+  userId: 'USR-41244',
+  tenantId: 'TENANT-ACME',
+  ruc: '2012344125639',
+  razon_social: 'ACME S.A.C.',
+  sessionId: 'TENANT-ACME:USR-512512'
+};
+
+// Elementos del DOM
+const estado1 = document.getElementById('widget-state-1');
+const estado2 = document.getElementById('widget-state-2');
+const estado3 = document.getElementById('widget-state-3');
+const chatWindow = document.getElementById('chat-window');
+const chatBody = document.getElementById('chat-body');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+
+// Controles de demo
+const estado1Btn = document.getElementById('estado1-btn');
+const estado2Btn = document.getElementById('estado2-btn');
+const estado3Btn = document.getElementById('estado3-btn');
+
+// Funciones de estado
+function showState(stateNumber) {
+  // Ocultar todos los estados
+  estado1.classList.add('hidden');
+  estado2.classList.add('hidden');
+  estado3.classList.add('hidden');
+  
+  // Remover clase active de botones
+  estado1Btn.classList.remove('active');
+  estado2Btn.classList.remove('active');
+  estado3Btn.classList.remove('active');
+  
+  // Mostrar el estado seleccionado
+  currentState = stateNumber;
+  switch(stateNumber) {
+    case 1:
+      estado1.classList.remove('hidden');
+      estado1Btn.classList.add('active');
+      break;
+    case 2:
+      estado2.classList.remove('hidden');
+      estado2Btn.classList.add('active');
+      break;
+    case 3:
+      estado3.classList.remove('hidden');
+      estado3Btn.classList.add('active');
+      break;
+  }
+}
+
+function nextState(fromState) {
+  if (fromState === 1) {
+    showState(2);
+  } else if (fromState === 2) {
+    showState(3);
+  }
+}
+
+// Eventos de clic para toggle del chat (abrir/cerrar)
+estado1.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('close-btn')) {
+    toggleChat();
+  }
+});
+
+estado2.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('close-btn')) {
+    toggleChat();
+  }
+});
+
+estado3.addEventListener('click', toggleChat);
+
+// Controles de demo
+estado1Btn.addEventListener('click', () => showState(1));
+estado2Btn.addEventListener('click', () => showState(2));
+estado3Btn.addEventListener('click', () => showState(3));
+
+// Funciones del chat
+function toggleChat() {
+  if (chatWindow.classList.contains('active')) {
+    closeChat();
+  } else {
+    openChat();
+  }
+}
+
+function openChat() {
+  chatWindow.classList.add('active');
+  chatInput.focus();
+}
+
+function closeChat() {
+  chatWindow.classList.remove('active');
+}
+
+function addMessage(content, isBot = false) {
+  const message = document.createElement('div');
+  message.className = `message ${isBot ? 'bot' : 'user'}`;
+  
+  const avatar = document.createElement('div');
+  avatar.className = 'message-avatar';
+  if (isBot) {
+    const img = document.createElement('img');
+    img.src = './assets/bot-icon.png';
+    img.alt = 'Bot Assistant';
+    avatar.appendChild(img);
+    
+    // Agregar funcionalidad para cerrar el chat al hacer clic en el avatar del bot
+    avatar.style.cursor = 'pointer';
+    avatar.addEventListener('click', closeChat);
+  } else {
+    avatar.textContent = '👤';
+  }
+  
+  const messageContent = document.createElement('div');
+  messageContent.className = 'message-content';
+  
+  if (isBot) {
+    // Procesar markdown básico para el bot
+    messageContent.innerHTML = processMarkdown(content);
+  } else {
+    messageContent.textContent = content;
+  }
+  
+  message.appendChild(avatar);
+  message.appendChild(messageContent);
+  
+  chatBody.appendChild(message);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const message = document.createElement('div');
+  message.className = 'message bot';
+  message.id = 'typing-indicator';
+  
+  const avatar = document.createElement('div');
+  avatar.className = 'message-avatar';
+  const img = document.createElement('img');
+  img.src = './assets/bot-icon.png?v=1';
+  img.alt = 'Bot Assistant';
+  avatar.appendChild(img);
+  
+  // Agregar funcionalidad para cerrar el chat al hacer clic en el avatar del bot
+  avatar.style.cursor = 'pointer';
+  avatar.addEventListener('click', closeChat);
+  
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'typing-indicator';
+  
+  const dotsContainer = document.createElement('div');
+  dotsContainer.className = 'typing-dots';
+  
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'typing-dot';
+    dotsContainer.appendChild(dot);
+  }
+  
+  typingDiv.appendChild(dotsContainer);
+  message.appendChild(avatar);
+  message.appendChild(typingDiv);
+  
+  chatBody.appendChild(message);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const indicator = document.getElementById('typing-indicator');
+  if (indicator) {
+    indicator.remove();
+  }
+}
+
+function processMarkdown(text) {
+  if (!text) return '';
+  
+  // Escapar HTML
+  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
+  // Procesar markdown básico
+  text = text
+    .replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+?)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+    
+  return text;
+}
+
+async function sendMessage() {
+  const message = chatInput.value.trim();
+  if (!message || isTyping) return;
+  
+  // Agregar mensaje del usuario
+  addMessage(message, false);
+  chatInput.value = '';
+  
+  // Mostrar indicador de escritura
+  isTyping = true;
+  sendBtn.disabled = true;
+  addTypingIndicator();
+  
+  try {
+    // Enviar al webhook
+    const payload = {
+      sessionId: config.sessionId,
+      chatInput: message,
+      userId: config.userId,
+      tenantId: config.tenantId,
+      ruc: config.ruc,
+      razon_social: config.razon_social,
+      messageId: 'msg-' + Date.now()
+    };
+    
+    const response = await fetch(config.webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    const result = await response.text();
+    let botMessage = 'Lo siento, no pude procesar tu mensaje.';
+    
+    try {
+      const jsonResult = JSON.parse(result);
+      botMessage = jsonResult.result || jsonResult.text || jsonResult.output || jsonResult.response || result;
+    } catch {
+      botMessage = result || 'Mensaje recibido correctamente.';
+    }
+    
+    // Simular delay de respuesta
+    setTimeout(() => {
+      removeTypingIndicator();
+      addMessage(botMessage, true);
+      isTyping = false;
+      sendBtn.disabled = false;
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Error al enviar mensaje:', error);
+    setTimeout(() => {
+      removeTypingIndicator();
+      addMessage('Lo siento, hubo un error de conexión. Intenta de nuevo.', true);
+      isTyping = false;
+      sendBtn.disabled = false;
+    }, 1000);
+  }
+}
+
+// Event listeners para el chat
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Auto-resize del textarea
+chatInput.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+});
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+  showState(1);
+  
+  // Agregar funcionalidad de cerrar chat al avatar del mensaje inicial del bot
+  const initialBotAvatar = document.querySelector('.chat-body .message.bot .message-avatar');
+  if (initialBotAvatar) {
+    initialBotAvatar.addEventListener('click', closeChat);
+  }
+});
+</script>
+
+</body>
+</html>
