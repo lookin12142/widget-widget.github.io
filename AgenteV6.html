@@ -840,52 +840,57 @@ function onDragEnd() {
     centerX > winW*0.25 && centerX < winW*0.75 &&
     centerY > winH*0.25 && centerY < winH*0.75
   );
+  const margin = 6; // margen de seguridad para todos los bordes
   if (isCenter) {
-    // Volver a la última posición anclada
+    // Volver a la última posición anclada, siempre visible
     if (window.lastSnap === 'left') {
-      chatWidget.style.left = '0px'; chatWidget.style.right = '';
+      chatWidget.style.left = margin + 'px'; chatWidget.style.right = '';
+      chatWidget.style.top = Math.max(margin, Math.min(rect.top, winH - h - margin)) + 'px';
+      chatWidget.style.bottom = '';
     } else if (window.lastSnap === 'right') {
-      chatWidget.style.left = ''; chatWidget.style.right = '0px';
+      chatWidget.style.left = '';
+      chatWidget.style.right = margin + 'px';
+      chatWidget.style.top = Math.max(margin, Math.min(rect.top, winH - h - margin)) + 'px';
+      chatWidget.style.bottom = '';
     } else if (window.lastSnap === 'top') {
-      chatWidget.style.top = '0px'; chatWidget.style.bottom = '';
+      chatWidget.style.top = margin + 'px'; chatWidget.style.bottom = '';
+      chatWidget.style.left = Math.max(margin, Math.min(rect.left, winW - w - margin)) + 'px';
+      chatWidget.style.right = '';
     } else if (window.lastSnap === 'bottom') {
-      chatWidget.style.top = ''; chatWidget.style.bottom = '0px';
+      chatWidget.style.top = '';
+      chatWidget.style.bottom = margin + 'px';
+      chatWidget.style.left = Math.max(margin, Math.min(rect.left, winW - w - margin)) + 'px';
+      chatWidget.style.right = '';
     } else {
-      chatWidget.style.right = '0px'; chatWidget.style.bottom = '0px';
+      chatWidget.style.right = margin + 'px'; chatWidget.style.bottom = margin + 'px';
     }
   } else {
-    // Snap al borde más cercano, limitando la posición para que no se pase
+    // Snap al borde más cercano, siempre visible
     if (snap === 'left') {
-      chatWidget.style.left = '0px';
+      chatWidget.style.left = margin + 'px';
       chatWidget.style.right = '';
-      let top = Math.max(0, Math.min(rect.top, winH - h));
-      // Limitar para que nunca se salga por arriba ni por abajo
-      top = Math.max(0, Math.min(top, winH - h));
+      let top = Math.max(margin, Math.min(rect.top, winH - h - margin));
       chatWidget.style.top = top + 'px';
       chatWidget.style.bottom = '';
       window.lastSnap = 'left';
     } else if (snap === 'right') {
       chatWidget.style.left = '';
-      chatWidget.style.right = '0px';
-      let top = Math.max(0, Math.min(rect.top, winH - h));
-      top = Math.max(0, Math.min(top, winH - h));
+      chatWidget.style.right = margin + 'px';
+      let top = Math.max(margin, Math.min(rect.top, winH - h - margin));
       chatWidget.style.top = top + 'px';
       chatWidget.style.bottom = '';
       window.lastSnap = 'right';
     } else if (snap === 'top') {
-      chatWidget.style.top = '0px';
+      chatWidget.style.top = margin + 'px';
       chatWidget.style.bottom = '';
-      let left = Math.max(0, Math.min(rect.left, winW - w));
-      // Limitar para que nunca se salga por izquierda ni derecha
-      left = Math.max(0, Math.min(left, winW - w));
+      let left = Math.max(margin, Math.min(rect.left, winW - w - margin));
       chatWidget.style.left = left + 'px';
       chatWidget.style.right = '';
       window.lastSnap = 'top';
     } else if (snap === 'bottom') {
       chatWidget.style.top = '';
-      chatWidget.style.bottom = '0px';
-      let left = Math.max(0, Math.min(rect.left, winW - w));
-      left = Math.max(0, Math.min(left, winW - w));
+      chatWidget.style.bottom = margin + 'px';
+      let left = Math.max(margin, Math.min(rect.left, winW - w - margin));
       chatWidget.style.left = left + 'px';
       chatWidget.style.right = '';
       window.lastSnap = 'bottom';
@@ -897,8 +902,22 @@ function onDragEnd() {
 
 // Solo permitir drag en dispositivos móviles (touch)
 function isMobileDevice() {
-  return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1) || ('ontouchstart' in window);
-}
+ return (typeof window.orientation !== "undefined") || 
+ (navigator.userAgent.indexOf('IEMobile') !== -1) || 
+  ('ontouchstart' in window);}
+
+
+ /* nction isMobileDevice() {
+    // Método 1: Por ancho de pantalla (más confiable para responsividad)
+    if (window.innerWidth <= 768) return true;
+    
+    // Método 2: Detección moderna de touch primario
+    if (window.matchMedia("(pointer: coarse)").matches) return true;
+    
+    // Método 3: User agent como fallback
+    const userAgent = navigator.userAgent.toLowerCase();
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+}*/
 
 if (isMobileDevice()) {
   [widget1, widget2, widget3].forEach(widget => {
